@@ -45,5 +45,5 @@ Une fois les conditions bloquantes (Horaire, Luminosité, Température) validée
 Pour éviter que l'arrosage ne se déclenche (ou ne s'arrête) à cause d'une seule mesure erronée ou d'un nuage passager, le système utilise une **Tolérance**.
 
 *   Le réglage "Tolérance" définit le nombre de mesures passées à examiner (ex: les 3 dernières mesures).
-*   Si une condition (comme "Sol trop sec") est détectée sur **n'importe laquelle** de ces 3 dernières mesures, le système considère la condition comme valide.
-*   Cela permet de "lisser" le comportement et d'être plus réactif si une mesure a été captée il y a quelques instants.
+*   Pour que l'arrosage se déclenche, il faut que la condition soit valide sur **TOUTES** les mesures de cette période.
+*   *Exemple :* Si on regarde les 3 dernières mesures, et que sur l'une d'elles il y a eu un nuage (mauvaise luminosité), l'arrosage ne partira pas. Cela assure une stabilité parfaite et évite les déclenchements sur un "faux positif" passager.

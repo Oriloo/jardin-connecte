@@ -157,7 +157,7 @@ const test = async (Table_Alertes, Table_AlertesS, Table_Arrosage, Table_Arrosag
     console.log('[Notifications test1]');
     const alerteN = (testAl1 || testAl2 || testAl3 || testAl4) ? 1 : 0;
     console.log('Notif d\'alerte = ' + alerteN);
-    const arrosageN = (testHoraire && testAr4 && testAr1 && (testAr2 || testAr3)) ? 1 : 0;
+    const arrosageN = (testHoraire && (testAr4 == T4_tole) && (testAr1 == T4_tole) && ((testAr2 == T4_tole) || (testAr3 == T4_tole))) ? 1 : 0;
     console.log('Notif d\'arrosage = ' + arrosageN);
 
     /*********************** ENVOYER ************************/
