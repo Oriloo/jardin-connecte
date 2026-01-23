@@ -1,12 +1,13 @@
 # Conditions d'Arrosage
 
-Ce document explique comment le système `jardin-connecte` décide de déclencher ou non l'arrosage. La décision repose sur une **hiérarchie de conditions** stricte.
+> Ce document explique comment le système `jardin-connecte` décide de déclencher ou non l'arrosage. La décision repose sur une **hiérarchie de conditions** stricte.
 
 ## ⚡ Résumé Rapide
 Pour que l'arrosage se lance, il faut impérativement :
 1.  Être dans la **Plage Horaire** autorisée.
 2.  AVEC la bonne **Luminosité**.
-3.  ET qu'au moins **un** seuil d'alerte soit atteint (Température, Humidité Air ou Humidité Sol).
+3.  Dans la bonne plage de **Température**.
+4.  ET qu'au moins **un** seuil d'arrosage soit atteint (Humidité Air ou Humidité Sol).
 
 ---
 
@@ -25,13 +26,16 @@ Le système autorise l'arrosage uniquement si l'heure actuelle se trouve dans la
 *   **Arrosage STOP (Toujours Inactif) ❌** : Ecartez les curseurs au maximum : Min à **0h** et Max à **24h**. (L'extérieur de la plage 0-24h n'existe pas).
 
 ### 2. ☀️ Luminosité (BLOQUANT)
-C'est la seconde condition obligatoire ("Sine Qua Non").
-Même si vous êtes dans la bonne plage horaire, la luminosité **doit** correspondre à votre réglage.
+La **Luminosité Ambiante** est une condition obligatoire.
 *   *Exemple :* Si vous réglez "Luminosité < Niveau 2" (pour arroser le soir/nuit), l'arrosage ne se déclenchera jamais en plein jour, même si le sol est sec.
 
-### 3. 🌡️💧 Facteurs Déclencheurs (AU MOINS UN REQUIS)
-Une fois les barrières "Horaire" et "Luminosité" levées, le système cherche une **raison** d'arroser. Il suffit d'**une seule** condition validée parmi les suivantes :
-*   **Température** : La température de l'air est comprise dans votre fourchette (ex: entre 20°C et 30°C).
+### 3. 🌡️ Température (BLOQUANT)
+La **Température de l'air** est une condition obligatoire.
+*   Si la température de l'air n'est pas comprise dans la plage définie (ex: entre 10°C et 30°C), l'arrosage ne se lancera pas.
+*   Cela permet d'éviter d'arroser s'il fait trop froid (gel) ou trop chaud (évaporation immédiate).
+
+### 4. 💧 Facteurs Déclencheurs (AU MOINS UN REQUIS)
+Une fois les conditions bloquantes (Horaire, Luminosité, Température) validées, le système vérifie si l'arrosage est nécessaire. Il suffit d'**une seule** condition validée :
 *   **Humidité Air** : L'humidité de l'air dépasse (ou descend sous) votre seuil.
 *   **Humidité Sol** : L'humidité du sol dépasse (ou descend sous) votre seuil (ex: Sol trop sec < 30%).
 
@@ -43,41 +47,3 @@ Pour éviter que l'arrosage ne se déclenche (ou ne s'arrête) à cause d'une se
 *   Le réglage "Tolérance" définit le nombre de mesures passées à examiner (ex: les 3 dernières mesures).
 *   Si une condition (comme "Sol trop sec") est détectée sur **n'importe laquelle** de ces 3 dernières mesures, le système considère la condition comme valide.
 *   Cela permet de "lisser" le comportement et d'être plus réactif si une mesure a été captée il y a quelques instants.
-
----
-
-## 💡 Exemples Concrets
-
-### Scénario A : Arrosage Validé ✅
-*   **Réglages** : Interdit 08h-20h (donc Auto la nuit), Luminosité < 5.
-*   **État** : Il est **22h00**. Il fait sombre (Lum 2).
-*   **Diagnostic** :
-    1.  Horaire OK (22h est > 20h, c'est la nuit).
-    2.  Luminosité OK (2 < 5).
-    3.  Déclencheur OK (Sol sec).
-*   **Résultat** : **ARROSAGE ENCLENCHÉ**.
-
-### Scénario B : Bloqué par l'Heure (Journée) ❌
-*   **Réglages** : Interdit 08h-20h.
-*   **État** : Il est **14h00**. Le sol est très sec.
-*   **Diagnostic** :
-    1.  Horaire KO (14h est dans la zone interdite de journée).
-    2.  Le reste n'est même pas évalué.
-*   **Résultat** : **PAS D'ARROSAGE**.
-
-### Scénario C : Bloqué par la Luminosité ❌
-*   **Réglages** : Interdit 08h-20h, Luminosité < 3 (Sombre/Soir), Sol < 30%.
-*   **État** : Il est **21h00**. Mais il fait encore clair (Lum 4).
-*   **Diagnostic** :
-    1.  Horaire OK (21h > 20h).
-    2.  Luminosité KO (4 n'est pas < 3).
-*   **Résultat** : **PAS D'ARROSAGE** (Le système attend que la luminosité baisse).
-
-### Scénario D : Tolérance en action ✅
-*   **Réglages** : Sol < 30%. Tolérance sur 3 mesures.
-*   **Historique Mesures** :
-    *   Mesure T (actuelle) : Sol 32% (Humide)
-    *   Mesure T-1 : Sol 29% (Sec)
-    *   Mesure T-2 : Sol 31% (Humide)
-*   **Diagnostic** : La mesure actuelle (32%) ne déclencherait pas l'arrosage, MAIS la mesure T-1 (29%) était valide. Grâce à la tolérance, le système retient que le seuil a été atteint récemment.
-*   **Résultat** : **ARROSAGE ENCLENCHÉ** (si Horaire et Lumière OK).
