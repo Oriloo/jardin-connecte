@@ -149,7 +149,7 @@ const test = async (Table_Alertes, Table_AlertesS, Table_Arrosage, Table_Arrosag
       testAr4 += testArrosage4 ? 1 : 0;
     }
 
-    const testHoraire = (time <= T3_heur0 && time >= T3_heur1) ? 1 : 0;
+    const testHoraire = (time <= T3_heur0 || time >= T3_heur1) ? 1 : 0;
     console.log(`NIVEAU D'ALERTE : ${testAl1}; ${testAl2}; ${testAl3}; ${testAl4}`);
     console.log(`NIVEAU ARROSAGE : ${testAr1}; ${testAr2}; ${testAr3}; ${testAr4}`);
     console.log(`HORAIRE ARROSAGE : ${testHoraire}`);
