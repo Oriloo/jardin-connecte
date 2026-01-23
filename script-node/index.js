@@ -191,23 +191,23 @@ const test = async (Table_Alertes, Table_AlertesS, Table_Arrosage, Table_Arrosag
         const dateformDif = dateform1 - dateform2;
         const testLastHTimeDif = (dateformDif < 60 * 60 * 1000) ? 1 : 0;
 
-        const isIdenticalAlerte =(lastAlerte.temp_alerte == testAl1 &&
-                                  lastAlerte.huma_alerte == testAl2 &&
-                                  lastAlerte.hums_alerte == testAl3 &&
-                                  lastAlerte.lumi_alerte == testAl4 ) ? 1 : 0;
+        const isIdenticalAlerte = (
+          lastAlerte.temp_alerte == testAl1 &&
+          lastAlerte.huma_alerte == testAl2 &&
+          lastAlerte.hums_alerte == testAl3 &&
+          lastAlerte.lumi_alerte == testAl4
+        ) ? 1 : 0;
 
         if (testLastHTimeDif && isIdenticalAlerte) {
           console.log("L'alerte a déjà été envoyée il y a moins d'une heure");
         } else {
           await query(`INSERT INTO ${Table_Alertes} (date, time, temp_alerte, huma_alerte, hums_alerte, lumi_alerte)
-                       VALUES (?, ?, ?, ?, ?, ?)`,
-                       [currentDateTime.split(' ')[0], currentDateTime.split(' ')[1], testAl1 > 0, testAl2 > 0, testAl3 > 0, testAl4 > 0]);
+                       VALUES (?, ?, ?, ?, ?, ?)`, [currentDateTime.split(' ')[0], currentDateTime.split(' ')[1], testAl1 > 0, testAl2 > 0, testAl3 > 0, testAl4 > 0]);
           console.log("L'alerte a été envoyée");
         }
       } else {
         await query(`INSERT INTO ${Table_Alertes} (date, time, temp_alerte, huma_alerte, hums_alerte, lumi_alerte)
-                     VALUES (?, ?, ?, ?, ?, ?)`,
-                     [currentDateTime.split(' ')[0], currentDateTime.split(' ')[1], testAl1 > 0, testAl2 > 0, testAl3 > 0, testAl4 > 0]);
+                     VALUES (?, ?, ?, ?, ?, ?)`, [currentDateTime.split(' ')[0], currentDateTime.split(' ')[1], testAl1 > 0, testAl2 > 0, testAl3 > 0, testAl4 > 0]);
         console.log("L'alerte a été envoyée");
       }
     } else {
@@ -226,13 +226,12 @@ const test = async (Table_Alertes, Table_AlertesS, Table_Arrosage, Table_Arrosag
         console.log("Il y a déjà un arrosage en cours");
       } else {
         await query(`INSERT INTO ${Table_Arrosage} (date, time, declencher_par, duree)
-                     VALUES (?, ?, ?, ?)`,
-                     [currentDateTime.split(' ')[0], currentDateTime.split(' ')[1], 0, '0000-00-00 00:00:00']);
+                    VALUES (?, ?, ?, ?)`, [currentDateTime.split(' ')[0], currentDateTime.split(' ')[1], 0, '0000-00-00 00:00:00']);
         console.log("L'arrosage a été envoyé");
       }
     } else {
       console.log("Il n'y a pas d'arrosage");
-      
+
       // Récupérer la dernière ligne d'arrosage
       const lastArrosageResults = await query(`SELECT * FROM ${Table_Arrosage} ORDER BY date DESC, time DESC LIMIT 1`);
       const lastArrosage = lastArrosageResults[0];
@@ -249,7 +248,7 @@ const test = async (Table_Alertes, Table_AlertesS, Table_Arrosage, Table_Arrosag
         const DateTimeDeFinAr = formatDate(new Date());
         // Calculer le temps écoulé entre ces deux périodes
         const TempsEcouleAr = new Date(DateTimeDeFinAr) - new Date(DateTimeDeDebutAr);
-        
+
         // Fonction pour formater une durée en "yyyy-MM-dd HH:mm:ss"
         function formatDuree(milliseconds) {
           // Calcul des différentes unités
@@ -274,8 +273,7 @@ const test = async (Table_Alertes, Table_AlertesS, Table_Arrosage, Table_Arrosag
         const formattedTempsEcouleAr = formatDuree(new Date(TempsEcouleAr));
 
         // Modifier la valeur de la colonne "duree"
-        await query(`UPDATE ${Table_Arrosage} SET duree = ? WHERE date = ? AND time = ?`,
-                    [formattedTempsEcouleAr, nDateDeDebutAr, TimeDeDebutAr]);
+        await query(`UPDATE ${Table_Arrosage} SET duree = ? WHERE date = ? AND time = ?`, [formattedTempsEcouleAr, nDateDeDebutAr, TimeDeDebutAr]);
 
         console.log(`L'arrosage s'est terminé. Durée: ${formattedTempsEcouleAr}`);
       } else {
