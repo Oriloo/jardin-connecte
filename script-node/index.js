@@ -1,11 +1,13 @@
 const mysql = require('mysql2');
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 // Configurer les informations de connexion
 const connection = mysql.createConnection({
-  host: 'my_db', // Adresse du serveur MySQL
-  user: 'root', // Nom d'utilisateur MySQL
-  password: 'rootpassword', // Mot de passe MySQL
-  database: 'jardinconnectetest1' // Nom de la base de données
+  host: process.env.DB_HOST, // Adresse du serveur MySQL
+  user: process.env.DB_USER, // Nom d'utilisateur MySQL
+  password: process.env.DB_PASSWORD, // Mot de passe MySQL
+  database: process.env.DB_NAME // Nom de la base de données
 });
 
 // Promisify the query function to use with async/await
