@@ -264,36 +264,7 @@ const test = async (Table_Alertes, Table_AlertesS, Table_Arrosage, Table_Arrosag
       if (testArrosage4) { testAr4 += 1; }
     }
 
-    // Convertir 24h en 0 pour représenter minuit
-    let hourMin;
-    if (T3_heur0 === 24) {
-      hourMin = 0;
-    } else {
-      hourMin = T3_heur0;
-    }
-    let hourMax;
-    if (T3_heur1 === 24) {
-      hourMax = 0;
-    } else {
-      hourMax = T3_heur1;
-    }
-
-    let testHoraire;
-    if (hourMin < hourMax) {
-      if (time >= hourMin && time <= hourMax) {
-        testHoraire = 1;
-      } else {
-        testHoraire = 0;
-      }
-    } else if (hourMin > hourMax) {
-      if (time >= hourMin || time <= hourMax) {
-        testHoraire = 1;
-      } else {
-        testHoraire = 0;
-      }
-    } else {
-      testHoraire = 1;
-    }
+    const testHoraire = (time <= T3_heur0 || time >= T3_heur1) ? 1 : 0;
 
     console.log(`NIVEAU D'ALERTE : ${testAl1}; ${testAl2}; ${testAl3}; ${testAl4}`);
     console.log(`NIVEAU ARROSAGE : ${testAr1}; ${testAr2}; ${testAr3}; ${testAr4}`);
