@@ -1,8 +1,8 @@
-//bibliothèque pour mqtt et mysql
+// Bibliothèque pour mqtt et mysql
 const mqtt = require('mqtt');
 const mysql = require('mysql2');
 
-//quelque variables pour gérer la communication TTN
+// Variables pour gérer la communication TTN
 const url = ''
 const topicSub = ""
 const topicPub = ""
@@ -15,10 +15,10 @@ const options = {
     password: '',
 }
 
-//connexion à TTN
+// Connexion à TTN
 const client = mqtt.connect(url, options)
 
-//connexion à la base de données
+// Connexion à la base de données
 const db = mysql.createConnection({
     host: "",
     user: "",
@@ -41,14 +41,14 @@ client.on('connect', function () {
     console.log('Connected')
 });
 
-//s'abonne en attente de l'ouverture du module
+// S'abonne en attente de l'ouverture du module
 client.subscribe(topicSub, function (err) {
     if (!err) {
         console.log(`client was subscribed`)
     }
 });
 
-//fonction pour la publication des données
+// Fonction pour la publication des données
 function publisher(message) {
     console.log('🛜 publisher: ', message);
 
@@ -69,7 +69,7 @@ function publisher(message) {
     })
 }
 
-//récupère l'information de si on doit arroser ou non
+// Récupère l'information de si on doit arroser ou non
 function connectMySql() {
     console.log('▶️ connectMySql() déclenchée');
     var message = '0';

@@ -1,12 +1,10 @@
 const mqtt = require('mqtt');
 const mysql = require('mysql2');
-const { spawn } = require('child_process');
-//bibliothèque mqtt et mysql
 
 console.log("Potager");
 
-// définition de quelques variables pour la connexion
-const topicSub = ""; // à remplacer la partie {devEUI}
+// Variables pour la connexion
+const topicSub = "";
 const url = '';
 const options = {
   clean: true,
@@ -16,10 +14,11 @@ const options = {
   username: '',
   password: '',
 };
-// connexion à TTN
+
+// Connexion à TTN
 const client = mqtt.connect(url, options);
 
-// connexion et définition BDD
+// Connexion et définition BDD
 const db = mysql.createConnection({
   host: "",
   user: "",
@@ -31,7 +30,7 @@ db.connect(function (err) {
   console.log("Connecté à la base de données MySQL!");
 });
 
-// message de confirmation de connexion
+// Message de confirmation de connexion
 client.on('connect', function () {
   console.log('Connected');
 });
@@ -43,10 +42,8 @@ client.subscribe(topicSub, function (err) {
   }
 });
 
-/*----------------------------------------------------------------------------------------------------------------------------------------------------------------
-/*----------------------------------------------------------------------------------------------------------------------------------------------------------------
-/*------------------------------------------------------------------Def Pol------------------------------------------------------------------------------
-/*----------------------------------------------------------------------------------------------------------------------------------------------------------------
+/*----------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------- Def Pol ----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 // Configurer les informations de connexion
@@ -300,9 +297,8 @@ const test = async (Table_Alertes, Table_AlertesS, Table_Arrosage, Table_Arrosag
     console.log(`NIVEAU D'ALERTE : ${testAl1}; ${testAl2}; ${testAl3}; ${testAl4}`);
     console.log(`NIVEAU ARROSAGE : ${testAr1}; ${testAr2}; ${testAr3}; ${testAr4}`);
     console.log(`HORAIRE ARROSAGE : ${testHoraire}`);
-
     console.log('[Notifications test1]');
-    // Remplacement du ternaire pour alerteN
+
     let alerteN;
     if (testAl1 || testAl2 || testAl3 || testAl4) {
       alerteN = 1;
@@ -310,7 +306,7 @@ const test = async (Table_Alertes, Table_AlertesS, Table_Arrosage, Table_Arrosag
       alerteN = 0;
     }
     console.log('Notif d\'alerte = ' + alerteN);
-    // Remplacement du ternaire pour arrosageN
+
     let arrosageN;
     if (testHoraire && testAr4 && (testAr1 || testAr2 || testAr3)) {
       arrosageN = 1;
@@ -340,15 +336,13 @@ const test = async (Table_Alertes, Table_AlertesS, Table_Arrosage, Table_Arrosag
         const [hours, minutes, seconds] = lastAlerte.time.split(':');
         lastAlerteDate.setUTCHours(hours, minutes, seconds, 0);
         const lastAlerteTime = lastAlerteDate.toISOString();
-        // Obtenir la date et l'heure actuelles
         const oneHourAgo1 = new Date();
-        const oneHourAgo = new Date(oneHourAgo1.getTime() + 2 * 60 * 60 * 1000); // ajoute 2h
+        const oneHourAgo = new Date(oneHourAgo1.getTime() + 2 * 60 * 60 * 1000);
         const formattedOneHourAgo = oneHourAgo.toISOString();
-
         const dateform1 = new Date(formattedOneHourAgo).getTime();
         const dateform2 = new Date(lastAlerteTime).getTime();
         const dateformDif = dateform1 - dateform2;
-        // Remplacement du ternaire pour testLastHTimeDif
+
         let testLastHTimeDif;
         if (dateformDif < 60 * 60 * 1000) {
           testLastHTimeDif = 1;
@@ -356,7 +350,6 @@ const test = async (Table_Alertes, Table_AlertesS, Table_Arrosage, Table_Arrosag
           testLastHTimeDif = 0;
         }
 
-        // Remplacement du ternaire pour isIdenticalAlerte
         let isIdenticalAlerte;
         if (
           lastAlerte.temp_alerte == testAl1 &&
@@ -461,13 +454,11 @@ const test = async (Table_Alertes, Table_AlertesS, Table_Arrosage, Table_Arrosag
   }
 };
 
-/*----------------------------------------------------------------------------------------------------------------------------------------------------------------
-/*----------------------------------------------------------------------------------------------------------------------------------------------------------------
-/*------------------------------------------------------------------/Def Pol------------------------------------------------------------------------------
-/*----------------------------------------------------------------------------------------------------------------------------------------------------------------
+/*----------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------- /Def Pol ---------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-// fonction lors de la réception d'un message
+// Fonction lors de la réception d'un message
 client.on('message', function (topicSub, message) {
   var B64Message = message.toString().substring(
     message.toString().search("frm_payload") + 14,
@@ -480,7 +471,7 @@ client.on('message', function (topicSub, message) {
   PolExecute();
 });
 
-// conversion base64 (format TTN) en hexadecimal
+// Conversion base64 (format TTN) en hexadecimal
 function base64ToHex(str) {
   const raw = atob(str);
   let result = '';
@@ -494,7 +485,7 @@ function base64ToHex(str) {
   return tab;
 }
 
-// fonction INSERT dans la BDD des valeurs reçues.
+// Fonction INSERT dans la BDD des valeurs reçues.
 function connectMySql(tab = []) {
   const Today = new Date;
   const mois = Today.getMonth() + 1;
@@ -527,8 +518,6 @@ function connectMySql(tab = []) {
       console.log(result);
     }
   );
-  // const bat = spawn('cmd.exe', ['/c', '"projet a jour 11.03.24"/javascript/test.bat']);
-  // console.log("test is passed");
 };
 
 async function PolExecute() {
