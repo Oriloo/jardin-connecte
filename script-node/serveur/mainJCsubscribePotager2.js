@@ -308,7 +308,12 @@ const test = async (Table_Alertes, Table_AlertesS, Table_Arrosage, Table_Arrosag
     console.log('Notif d\'alerte = ' + alerteN);
 
     let arrosageN;
-    if (testHoraire && testAr4 && (testAr1 || testAr2 || testAr3)) {
+    if (
+      testHoraire &&
+      testAr4 === T4_tole &&
+      testAr1 === T4_tole &&
+      (testAr2 === T4_tole || testAr3 === T4_tole)
+    ) {
       arrosageN = 1;
     } else {
       arrosageN = 0;
