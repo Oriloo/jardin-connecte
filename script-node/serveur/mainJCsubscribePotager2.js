@@ -399,54 +399,26 @@ const test = async (Table_Alertes, Table_AlertesS, Table_Arrosage, Table_Arrosag
     }
 
     // Vérifier les arrosages
-    if (arrosageN === 1) {
-      const currentDateTime = formatDate(new Date());
+    const currentDateTime = formatDate(new Date());
+    const [currDate, currTime] = currentDateTime.split(' ');
 
-      // Récupérer la dernière ligne d'arrosage
-      const lastArrosageResults = await query(`SELECT * FROM ${Table_Arrosage} ORDER BY date DESC, time DESC LIMIT 1`);
-      const lastArrosage = lastArrosageResults[0];
+    // 1. Récupérer le dernier état valide (0 par défaut si vide)
+    const lastArrosageResults = await query(`SELECT etat FROM ${Table_Arrosage} ORDER BY date DESC, time DESC LIMIT 1`);
+    const lastEtat = (lastArrosageResults.length > 0) ? lastArrosageResults[0].etat : 0;
 
-      // On vérifie si un arrosage est déjà en cours (en fonction de la "duree")
-      let arrosageActif = false;
-      if (lastArrosage && lastArrosage.duree) {
-        const finArrosage = new Date(lastArrosage.duree);
-        if (new Date() < finArrosage) {
-          arrosageActif = true;
-        }
-      }
+    // 2. Déterminer l'état cible
+    const targetEtat = arrosageN;
 
-      if (arrosageActif) {
-        console.log("Il y a déjà un arrosage en cours");
-      } else {
-        // Nouvelle date de fin : maintenant + 5 minutes
-        const finDateTime = new Date(Date.now() + 5 * 60 * 1000);
-        const finDateTimeStr = formatDate(finDateTime);
-
-        await query(`
-            INSERT INTO ${Table_Arrosage} (date, time, declencher_par, duree)
-            VALUES (?, ?, ?, ?)`,
-            [currentDateTime.split(' ')[0], currentDateTime.split(' ')[1], 0, finDateTimeStr]
-        );
-        console.log("L'arrosage a été envoyé");
-      }
+    // 3. Appliquer la transition si nécessaire
+    if (targetEtat !== lastEtat) {
+      console.log(`Changement d'état détecté : ${lastEtat} -> ${targetEtat}`);
+      await query(
+        `INSERT INTO ${Table_Arrosage} (date, time, declencher_par, etat) VALUES (?, ?, ?, ?)`,
+        [currDate, currTime, 0, targetEtat]
+      );
+      console.log(`Nouvel état ${targetEtat} inséré en base.`);
     } else {
-      console.log("Il n'y a pas de demande d'arrosage");
-
-      // Récupérer la dernière ligne d'arrosage
-      const lastArrosageResults = await query(`SELECT * FROM ${Table_Arrosage} ORDER BY date DESC, time DESC LIMIT 1`);
-      const lastArrosage = lastArrosageResults[0];
-
-      if (lastArrosage && lastArrosage.duree) {
-        const finArrosage = new Date(lastArrosage.duree);
-
-        if (new Date() >= finArrosage) {
-          console.log("L'arrosage s'est terminé. Durée : " + last.duree);
-        } else {
-          console.log("L'arrosage est encore en cours, fin prévue à : " + last.duree);
-        }
-      } else {
-        console.log("Aucun arrosage en cours à gérer.");
-      }
+      console.log(`Pas de changement d'état (Actuel : ${lastEtat}, Demandé : ${targetEtat})`);
     }
 
   } catch (error) {

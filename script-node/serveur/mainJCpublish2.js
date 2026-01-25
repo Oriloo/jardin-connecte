@@ -72,49 +72,47 @@ function publisher(message) {
 // Récupère l'information de si on doit arroser ou non
 function connectMySql() {
     console.log('▶️ connectMySql() déclenchée');
-    var message = '0';
 
-    db.query("SELECT duree FROM f_arrosage ORDER BY date DESC, time DESC LIMIT 1;",
-        function (err, result) {
-            if (err) throw err;
-            else console.log(result);
-
-            const dateDuree = result[0].duree;
-            console.log("▶️ dateDuree =", dateDuree);
-            const maintenant = new Date();
-
-            if (!dateDuree || dateDuree <= maintenant) {
-                message = '0';
-                console.log("LE MESSAGE &er oui: " + message);
-            } else {
-                message = '1';
-                console.log("LE MESSAGE &er non: " + message);
-            }
+    // Promesse pour récupérer l'état Fleurs
+    const getFleurState = new Promise((resolve, reject) => {
+        db.query("SELECT etat FROM f_arrosage ORDER BY date DESC, time DESC LIMIT 1;", (err, result) => {
+            if (err) return reject(err);
+            if (result.length === 0) return resolve(0);
+            resolve(result[0].etat ? 1 : 0);
         });
+    });
 
-    db.query("SELECT duree FROM p_arrosage ORDER BY date DESC, time DESC LIMIT 1;",
-        function (err, result) {
-            if (err) throw err;
-            else console.log(result);
+    // Promesse pour récupérer l'état Potager
+    const getPotagerState = new Promise((resolve, reject) => {
+        db.query("SELECT etat FROM p_arrosage ORDER BY date DESC, time DESC LIMIT 1;", (err, result) => {
+            if (err) return reject(err);
+            if (result.length === 0) return resolve(0);
+            resolve(result[0].etat ? 1 : 0);
+        });
+    });
 
-            const dateDuree = result[0].duree;
-            console.log("▶️ dateDuree =", dateDuree);
-            const maintenant = new Date();
+    Promise.all([getFleurState, getPotagerState])
+        .then(([fleurState, potagerState]) => {
+            console.log(`États récupérés -> Fleurs: ${fleurState}, Potager: ${potagerState}`);
 
-            if (!dateDuree || dateDuree <= maintenant) {
-                console.log(1);
-                if (message == '1') {
-                    publisher(String.fromCharCode(1));
+            let codeToSend;
+            if (potagerState === 0) {
+                if (fleurState === 1) {
+                    codeToSend = 1;
                 } else {
-                    publisher(String.fromCharCode(0));
+                    codeToSend = 0;
                 }
             } else {
-                console.log(2);
-                if (message == '1') {
-                    publisher(String.fromCharCode(3));
+                if (fleurState === 1) {
+                    codeToSend = 3;
                 } else {
-                    publisher(String.fromCharCode(2));
+                    codeToSend = 2;
                 }
             }
+
+            publisher(String.fromCharCode(codeToSend));
+        })
+        .catch(err => {
+            console.error("Erreur SQL:", err);
         });
 }
