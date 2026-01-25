@@ -26,7 +26,7 @@ const db = mysql.createConnection({
   password: "",
   database: ""
 });
-db.connect(function(err) {
+db.connect(function (err) {
   if (err) throw err;
   console.log("Connecté à la base de données MySQL!");
 });
@@ -355,10 +355,10 @@ const test = async (Table_Alertes, Table_AlertesS, Table_Arrosage, Table_Arrosag
 
         let isIdenticalAlerte;
         if (
-            lastAlerte.temp_alerte == testAl1 &&
-            lastAlerte.huma_alerte == testAl2 &&
-            lastAlerte.hums_alerte == testAl3 &&
-            lastAlerte.lumi_alerte == testAl4
+          lastAlerte.temp_alerte == testAl1 &&
+          lastAlerte.huma_alerte == testAl2 &&
+          lastAlerte.hums_alerte == testAl3 &&
+          lastAlerte.lumi_alerte == testAl4
         ) {
           isIdenticalAlerte = 1;
         } else {
@@ -369,23 +369,8 @@ const test = async (Table_Alertes, Table_AlertesS, Table_Arrosage, Table_Arrosag
           console.log("L'alerte a déjà été envoyée il y a moins d'une heure");
         } else {
           await query(
-              `INSERT INTO ${Table_Alertes} (date, time, temp_alerte, huma_alerte, hums_alerte, lumi_alerte)
-             VALUES (?, ?, ?, ?, ?, ?)`,
-              [
-                currentDateTime.split(' ')[0],
-                currentDateTime.split(' ')[1],
-                testAl1 > 0,
-                testAl2 > 0,
-                testAl3 > 0,
-                testAl4 > 0
-              ]
-          );
-          console.log("L'alerte a été envoyée");
-        }
-      } else {
-        await query(
             `INSERT INTO ${Table_Alertes} (date, time, temp_alerte, huma_alerte, hums_alerte, lumi_alerte)
-           VALUES (?, ?, ?, ?, ?, ?)`,
+             VALUES (?, ?, ?, ?, ?, ?)`,
             [
               currentDateTime.split(' ')[0],
               currentDateTime.split(' ')[1],
@@ -394,6 +379,21 @@ const test = async (Table_Alertes, Table_AlertesS, Table_Arrosage, Table_Arrosag
               testAl3 > 0,
               testAl4 > 0
             ]
+          );
+          console.log("L'alerte a été envoyée");
+        }
+      } else {
+        await query(
+          `INSERT INTO ${Table_Alertes} (date, time, temp_alerte, huma_alerte, hums_alerte, lumi_alerte)
+           VALUES (?, ?, ?, ?, ?, ?)`,
+          [
+            currentDateTime.split(' ')[0],
+            currentDateTime.split(' ')[1],
+            testAl1 > 0,
+            testAl2 > 0,
+            testAl3 > 0,
+            testAl4 > 0
+          ]
         );
         console.log("L'alerte a été envoyée");
       }
@@ -466,8 +466,8 @@ const test = async (Table_Alertes, Table_AlertesS, Table_Arrosage, Table_Arrosag
 // fonction lors de la réception d'un message
 client.on('message', function (topicSub, message) {
   var B64Message = message.toString().substring(
-      message.toString().search("frm_payload") + 14,
-      message.toString().search("frm_payload") + 30
+    message.toString().search("frm_payload") + 14,
+    message.toString().search("frm_payload") + 30
   );
   console.log(B64Message);
   const tab = base64ToHex(B64Message);
@@ -507,49 +507,49 @@ function connectMySql(tab = []) {
   console.log(tab[4]);
   console.log(tab[5]);
   db.query(
-      "INSERT INTO f_mesures (date, time, temperature_air, humidite_air, humidite_sol, lumiere) VALUES ('" +
-      date +
-      "', '" +
-      Time +
-      "', '" +
-      temp +
-      "." +
-      tab[3] +
-      "', '" +
-      tab[4] + tab[5] + tab[6] +
-      "', '" +
-      tab[7] + tab[8] + tab[9] +
-      "', '" +
-      tab[10] +
-      "');",
-      function (err, result) {
-        if (err) throw err;
-        console.log(result);
-      }
+    "INSERT INTO f_mesures (date, time, temperature_air, humidite_air, humidite_sol, lumiere) VALUES ('" +
+    date +
+    "', '" +
+    Time +
+    "', '" +
+    temp +
+    "." +
+    tab[3] +
+    "', '" +
+    tab[4] + tab[5] + tab[6] +
+    "', '" +
+    tab[7] + tab[8] + tab[9] +
+    "', '" +
+    tab[10] +
+    "');",
+    function (err, result) {
+      if (err) throw err;
+      console.log(result);
+    }
   );
 };
 
 async function PolExecute() {
   try {
     await test(
-        'p_alertes',
-        'p_alertes_seuils',
-        'p_arrosage',
-        'p_arrosage_horaire',
-        'p_arrosage_seuils',
-        'p_mesures',
-        'p_tolerance_seuils',
-        'potager'
+      'p_alertes',
+      'p_alertes_seuils',
+      'p_arrosage',
+      'p_arrosage_horaire',
+      'p_arrosage_seuils',
+      'p_mesures',
+      'p_tolerance_seuils',
+      'potager'
     );
     await test(
-        'f_alertes',
-        'f_alertes_seuils',
-        'f_arrosage',
-        'f_arrosage_horaire',
-        'f_arrosage_seuils',
-        'f_mesures',
-        'f_tolerance_seuils',
-        'fleurs'
+      'f_alertes',
+      'f_alertes_seuils',
+      'f_arrosage',
+      'f_arrosage_horaire',
+      'f_arrosage_seuils',
+      'f_mesures',
+      'f_tolerance_seuils',
+      'fleurs'
     );
   } catch (error) {
     console.error('Erreur :', error);

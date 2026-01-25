@@ -60,7 +60,7 @@ function publisher(message) {
             }]
         }`;
 
-    client.publish(topicPub, prototypeRep, {qos: 0, retain: false}, function (error) {
+    client.publish(topicPub, prototypeRep, { qos: 0, retain: false }, function (error) {
         if (error) {
             console.log(error)
         } else {
