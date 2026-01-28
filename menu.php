@@ -2,7 +2,7 @@
 <div class="Barres">
 	<!-- Barres supérieures du site -->
 	<nav class="nav-bar">
-		<div class="logo-jc"> <?php include('image/svg/logo-jc-nom.svg'); ?> v2</div>
+		<div class="logo-jc"> <?php include('image/svg/logo-jc-nom.svg'); ?></div>
 		<div class="ico-notife"> <?php include('image/svg/notife-ico.svg'); ?> </div>
 	</nav>
 
