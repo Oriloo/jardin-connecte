@@ -22,7 +22,7 @@ if ($selectedTable == "potager") {
     $Table_Arrosage = "f_arrosage";
 }
 
-$sql = "INSERT INTO $Table_Arrosage (date, time, declencher_par) VALUES ('$date', '$heure', '$UserID')";
+$sql = "INSERT INTO $Table_Arrosage (date, time, declencher_par, etat) VALUES ('$date', '$heure', '$UserID', 1)";
 
 if ($conn->query($sql) === TRUE) {
     // echo "Enregistrement réussi!";

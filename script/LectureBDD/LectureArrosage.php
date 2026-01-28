@@ -25,12 +25,14 @@ while ($row = $resultat->fetch_assoc()) {
     $date_arrosage[] = $row['date'];
     $time_arrosage[] = $row['time'];
     $modif_arrosage[] = $row['declencher_par'];
+    $etat_arrosage[] = $row['etat'];
 }
 
 // Obtenir les dernières valeurs de chaque tableau
 $date_arrosage_F = end($date_arrosage);
 $time_arrosage_F = end($time_arrosage);
 $modif_arrosage_F = end($modif_arrosage);
+$etat_arrosage_F = end($etat_arrosage);
 
 $connexion->close();
 
@@ -61,5 +63,5 @@ if ($diffADT->d !== 0) {
     $resultADT .= $diffADT->d . 'j, ';
 }
 
-$resultADT .= $diffADT->h .'h '. $diffADT->i;
+$resultADT .= $diffADT->h . 'h ' . $diffADT->i;
 ?>
